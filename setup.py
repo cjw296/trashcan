@@ -17,7 +17,7 @@ setup(
         "Background deletion of files and directories you no longer need."
     ),
     long_description=open('README.rst').read(),
-    url='https://github.com/cjw296/trashcan',
+    url='https://github.com/simplistix/trashcan',
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
