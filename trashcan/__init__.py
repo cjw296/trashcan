@@ -8,16 +8,15 @@ from typing import Union, Callable, Optional
 logger = getLogger(__name__)
 
 
-# Holder for the thread pool used when its nested inside a process pool
+# Holders for the thread pool used when its nested inside a process pool
+_threads: Optional[int] = None
 _threadpool: Optional[ThreadPoolExecutor] = None
 
 
-def _init_thread_pool(max_workers: int):
-    global _threadpool
-    _threadpool = ThreadPoolExecutor(max_workers)
-
-
 def _submit(delete: Callable, path: Path):
+    global _threads, _threadpool
+    if _threadpool is None:
+        _threadpool = ThreadPoolExecutor(_threads)
     return _threadpool.submit(delete, path)
 
 
@@ -44,11 +43,9 @@ class Trashcan:
 
     def __init__(self, threads: int = None, processes: int = None):
         if processes and threads:
-            self.executor = ProcessPoolExecutor(
-                max_workers=processes,
-                initializer=_init_thread_pool,
-                initargs=(threads,),
-            )
+            global _threads
+            _threads = threads
+            self.executor = ProcessPoolExecutor(max_workers=processes)
             self.submit = partial(self.executor.submit, _submit)
         elif threads:
             self.executor = ThreadPoolExecutor(max_workers=threads)
