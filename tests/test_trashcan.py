@@ -114,3 +114,10 @@ class TestProcessesAndThreads(Checks):
     @pytest.fixture
     def trashcan(self):
         return Trashcan(processes=1, threads=1)
+
+
+class TestMany(Checks):
+
+    @pytest.fixture
+    def trashcan(self):
+        return Trashcan(processes=4, threads=16)
