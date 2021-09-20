@@ -42,6 +42,15 @@ def assert_eventually_false(c: Callable, timeout: float = 1, poll: float = 0.01)
     assert success
 
 
+def maketree(path: py.path.local, files: int, dirs: int, depth: int):
+    path.mkdir()
+    for i in range(1, files+1):
+        (path / f'file{i}.text').write_text(str(i), 'ascii')
+    if depth > 0:
+        for i in range(1, dirs+1):
+            maketree(path / f'dir{i}', files, dirs, depth-1)
+
+
 def test_assert_eventually():
     with ShouldRaise(AssertionError):
         assert_eventually_false(lambda: True, timeout=0.001, poll=0.001)
@@ -70,6 +79,13 @@ class Checks:
         trashcan(str(path))
         trashcan.shutdown()
         log.check(('trashcan', 'ERROR', f'Exception deleting {path}'))
+
+    def test_nested(self, trashcan: Trashcan, tmpdir: py.path.local):
+        path = tmpdir / 'root'
+        maketree(path, files=5, dirs=3, depth=4)
+        trashcan(str(path))
+        trashcan.shutdown()
+        assert not path.exists()
 
 
 class TestSimple(Checks):
