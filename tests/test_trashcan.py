@@ -65,9 +65,9 @@ class Checks:
         trashcan(dir_path)
         assert_eventually_false(dir_path.exists)
 
-    def test_delete_not_there(self, trashcan: Trashcan, tmpdir: Path, log: LogCapture):
+    def test_delete_not_there(self, trashcan: Trashcan, tmpdir: py.path.local, log: LogCapture):
         path = tmpdir / 'not.there'
-        trashcan(path)
+        trashcan(str(path))
         trashcan.shutdown()
         log.check(('trashcan', 'ERROR', f'Exception deleting {path}'))
 
