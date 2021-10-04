@@ -30,11 +30,11 @@ common: &common
 workflows:
   push:
     <<: *common
-  periodic:
-    <<: *common
-    triggers:
-      - schedule:
-          cron: "0 0 * * *"
-          filters:
-            branches:
-              only: master
+#  periodic:
+#    <<: *common
+#    triggers:
+#      - schedule:
+#          cron: "0 0 * * *"
+#          filters:
+#            branches:
+#              only: master
